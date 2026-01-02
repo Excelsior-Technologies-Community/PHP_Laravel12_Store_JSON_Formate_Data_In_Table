@@ -8,6 +8,7 @@ Route::get('products/create', [ProductController::class, 'create']);
 Route::get('products/search', [ProductController::class, 'search']);
 
 
+
 Route::get('/', function () {
     return view('welcome');
 });
