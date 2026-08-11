@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-   
-
     protected $fillable = [
-        'name', 'details'
-    ]; 
+        'name', 'details', 'price', 'stock', 'status'
+    ];
 
     protected $casts = [
-        'details' => 'json'    
+        'details' => 'array',
+        'price'   => 'decimal:2',
     ];
 }
-
