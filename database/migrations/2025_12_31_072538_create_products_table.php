@@ -5,17 +5,21 @@
  use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
- {
-public function up(): void
-     {
-         Schema::create('products', function (Blueprint $table) {
+{
+    public function up(): void
+    {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('details');    
+            $table->json('details');
+            $table->decimal('price', 10, 2)->default(0);
+            $table->integer('stock')->default(0);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
          });
     }
-public function down(): void
+
+    public function down(): void
     {
         Schema::dropIfExists('products');
     }

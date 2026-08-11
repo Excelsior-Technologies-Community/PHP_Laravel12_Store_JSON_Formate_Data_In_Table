@@ -2,13 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-     
-Route::get('products/create', [ProductController::class, 'create']);
 
-Route::get('products/search', [ProductController::class, 'search']);
-
+Route::get('products/search', [ProductController::class, 'search'])->name('products.search');
+Route::resource('products', ProductController::class);
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('products.index');
 });
