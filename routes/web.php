@@ -3,6 +3,82 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/',
+    [ProductController::class, 'dashboard']
+)->name('dashboard');
+
+Route::get(
+    'dashboard',
+    [ProductController::class, 'dashboard']
+)->name('products.dashboard');
+
+
+/*
+|--------------------------------------------------------------------------
+| Bulk Actions
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    'products/bulk-action',
+    [ProductController::class, 'bulkAction']
+)->name('products.bulk-action');
+
+
+/*
+|--------------------------------------------------------------------------
+| Trash
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    'products/trash',
+    [ProductController::class, 'trash']
+)->name('products.trash');
+
+Route::put(
+    'products/{id}/restore',
+    [ProductController::class, 'restore']
+)->name('products.restore');
+
+Route::delete(
+    'products/{id}/force-delete',
+    [ProductController::class, 'forceDelete']
+)->name('products.force-delete');
+
+
+/*
+|--------------------------------------------------------------------------
+| Duplicate
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    'products/{product}/duplicate',
+    [ProductController::class, 'duplicate']
+)->name('products.duplicate');
+
+
+/*
+|--------------------------------------------------------------------------
+| CSV Export
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    'products/export-csv',
+    [ProductController::class, 'exportCsv']
+)->name('products.export-csv');
+
+
 /*
 |--------------------------------------------------------------------------
 | JSON Import / Export
@@ -44,22 +120,11 @@ Route::put(
 
 /*
 |--------------------------------------------------------------------------
-| Product Search
-|--------------------------------------------------------------------------
-*/
-
-Route::get(
-    'products/search',
-    [ProductController::class, 'search']
-)->name('products.search');
-
-
-/*
-|--------------------------------------------------------------------------
 | Product CRUD
 |--------------------------------------------------------------------------
 */
 
+<<<<<<< HEAD
 Route::resource('products', ProductController::class);
 
 
@@ -75,3 +140,9 @@ Route::resource('products', ProductController::class);
 Route::get('/', function () {
     return redirect()->route('products.index');
 });
+=======
+Route::resource(
+    'products',
+    ProductController::class
+);
+>>>>>>> development
