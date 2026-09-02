@@ -1,59 +1,138 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PHP_Laravel12_Store_JSON_Formate_Data_In_Table
+# Step 1 : Install Laravel 12 and Create Project using Command
+```php
+composer create-project laravel/laravel PHP_Laravel12_Store_JSON_Formate_Data_In_Table
+```
+# Step 2 : Setup database method for .env file
+```php
+ DB_CONNECTION=mysql
+ DB_HOST=127.0.0.1
+ DB_PORT=3306
+ DB_DATABASE=your database name
+ DB_USERNAME=root
+ DB_PASSWORD=
+```
+# Step 3 : Create migration file for database table 
+```php
+php artisan make:migration create_products_table
+```
+database/migrations/2024_04_11_141714_create_products_table.php
+```php
+<?php
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-## About Laravel
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->json('details');
+            $table->timestamps();
+        });
+    }
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('products');
+    }
+};
+```
+# Then run the migration command to create the items table.
+```php
+Php artisan migrate
+```
+# Step 4: Create Model
+```php
+Php artisan make:model Product
+```
+```php
+<?php
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+namespace App\Models;
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+use Illuminate\Database\Eloquent\Model;
 
-## Learning Laravel
+class Product extends Model
+{
+   
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+    protected $fillable = [
+        'name', 'details'
+    ]; 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    protected $casts = [
+        'details' => 'json'    
+    ];
+}
+```
 
-## Laravel Sponsors
+# Step 5 : Create controller 
+```php
+Php artisan make:controller ProductController
+```
+```php
+<?php
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+namespace App\Http\Controllers;
 
-### Premium Partners
+use Illuminate\Http\Request;
+use App\Models\Product;
+class ProductController extends Controller
+{
+ public function create()
+    {
+        $input = [
+            'name' => 'Washing mashine',
+            'details' => [
+                'brand' => 'Bosch', 
+                'tags' => ['7kg', '8kg', '10kg']
+            ]
+        ];
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+       return Product::create($input);
+    }
+     public function search()
+    {
+        $product = Product::whereJsonContains('details->tags', '7kg')->get();
+        return $product;
+    }
+}
+```
+# Step 6 : Create web route
+Routes/web.php file
+```php
+<?php
 
-## Contributing
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+     
+Route::get('products/create', [ProductController::class, 'create']);
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Route::get('products/search', [ProductController::class, 'search']);
 
-## Code of Conduct
+Route::get('/', function () {
+    return view('welcome');
+});
+```
+# Step 7 : Now Run Server and paste this url from browser
+```php
+php artisan serve
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+http://127.0.0.1:8000/products/create
+```
+ 
+ <img width="1530" height="381" alt="image" src="https://github.com/user-attachments/assets/c159f02e-b49c-47de-b556-2f9b1841ecb9" />
+<img width="1155" height="297" alt="image" src="https://github.com/user-attachments/assets/cd73cd6a-3550-486d-8679-30d3cfd06103" />
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
